@@ -1,4 +1,5 @@
-import pylab
+# import pylab
+
 
 class Dataset:
     def __init__(self, data):
@@ -14,7 +15,8 @@ class Dataset:
         self.n = len(self.data)
         tmp = set()
         for x in self.data:
-            words = x.split()
+            # words = x.split()
+            words = x
             tmp |= set(words)
         tmp = sorted(tmp)
         self.dic = {tmp[i]: i for i in range(len(tmp))}
@@ -22,7 +24,8 @@ class Dataset:
 
         self.d = []
         for x in self.data:
-            words = x.split()
+            # words = x.split()
+            words = x
             tmp = [0 for i in range(self.vec_l)]
             for w in words:
                 tmp[self.dic[w]] = 1

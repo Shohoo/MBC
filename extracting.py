@@ -28,7 +28,7 @@ class Extractor:
             data = soup.body.get_text()
             t = word_tokenize(data)
             t_set = set(t)
-            # TODO remove special chars and maybe single chars
+            # TODO remove special chars and maybe single chars, 's, '' etc
             t_set = Simplifier.remove_single(t_set)
             t_set_s = Extractor.simplify(t_set)
             t_set_s = Simplifier.remove_single(t_set_s)
@@ -46,7 +46,6 @@ class Extractor:
             print(word + "---> " + s_word)
             tmp |= set([s_word])
         return tmp
-
 
 
 class Simplifier:
@@ -87,5 +86,6 @@ class Simplifier:
         return wn.NOUN
 
 
-Extractor.extract_to_file('http://www.ox.ac.uk/', 'ex.txt')
-print(Extractor.extract('./../q.html'))
+if __name__ == "__main__":
+    Extractor.extract_to_file('http://www.ox.ac.uk/', 'ex.txt')
+    print(Extractor.extract('./../q.html'))
