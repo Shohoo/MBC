@@ -5,27 +5,28 @@ from bs4 import BeautifulSoup
 import requests
 
 class Extractor:
-    @staticmethod
-    def extract_to_file(url, file):
-        with open(file, 'wb') as file:
-            r = requests.get(url=url, verify=False)
-            html = r.text
-            soup = BeautifulSoup(html)
-            # kill all script and style elements
-            for script in soup(["script", "style"]):
-                script.extract()  # rip it out
-            data = soup.body.get_text()
-            t = word_tokenize(data)
-            file.write(str(t).encode())
+    # @staticmethod
+    # def extract_to_file(url, file):
+    #     with open(file, 'wb') as file:
+    #         r = requests.get(url=url, verify=False)
+    #         html = r.text
+    #         soup = BeautifulSoup(html)
+    #         # kill all script and style elements
+    #         for script in soup(["script", "style"]):
+    #             script.extract()  # rip it out
+    #         data = soup.body.get_text()
+    #         t = word_tokenize(data)
+    #         file.write(str(t).encode())
 
     @staticmethod
-    def extract(file):
+    def extract(file, is_html):
         with open(file, 'r') as file:
-            html = file.read()
-            soup = BeautifulSoup(html)
-            for script in soup(["script", "style"]):
-                script.extract()
-            data = soup.body.get_text()
+            data = file.read()
+            if is_html:
+                soup = BeautifulSoup(data)
+                for script in soup(["script", "style"]):
+                    script.extract()
+                data = soup.body.get_text()
             t = word_tokenize(data)
             t_set = set(t)
             # TODO remove special chars and maybe single chars, 's, '' etc
@@ -87,5 +88,5 @@ class Simplifier:
 
 
 if __name__ == "__main__":
-    Extractor.extract_to_file('http://www.ox.ac.uk/', 'ex.txt')
+    # Extractor.extract_to_file('http://www.ox.ac.uk/', 'ex.txt')
     print(Extractor.extract('./../q.html'))

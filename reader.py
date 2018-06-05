@@ -13,7 +13,7 @@ class Reader:
                     counter += 1
                     path = os.path.join(root, filename)
                     print(path)
-                    terms = Extractor.extract(path)
+                    terms = Extractor.extract(path, True)
                     d.append(terms)
         print(counter)
         return d

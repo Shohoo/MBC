@@ -1,14 +1,16 @@
 import math
 import numpy
 import sys
+import random
 
 from dataset import Dataset
 
 class EM:
-    def __init__(self, dataset, k):
+    def __init__(self, dataset, k, epsilon):
         self.dataset = dataset
         self.vec_l = dataset.vec_l
         self.k = k
+        self.epsilon = epsilon
         self.n = dataset.n
         self.c = None
         self.lam = None
@@ -20,17 +22,17 @@ class EM:
     def _prepare(self):
         self.c = []
         self.lam = []
-        # for k in range(self.k):
-        #     self.c.append(numpy.array([i for i in range(self.vec_l)]))
-        #     self.lam.append(1 / self.k)
-        self.c = [[0, 1], [1, 0]]
-        self.lam = [0.7, 0.3]
+        for k in range(self.k):
+            self.c.append(numpy.array([random.randint(0, 1) for i in range(self.vec_l)]))
+            self.lam.append(1 / self.k)
+        # self.c = [[0, 1], [1, 0]]
+        # self.lam = [0.45, 0.55]
 
         self.pwkdi = [[0 for i in range(self.n)] for k in range(self.k)]
         self.d = [numpy.array(d) for d in self.dataset.d]
 
     def pxwk(self, i, k):
-        return math.exp(-(numpy.linalg.norm(self.d[i] - self.c[k]) ** 2))
+        return 1 / math.sqrt(2 * math.pi) * math.exp(-(numpy.linalg.norm(self.d[i] - self.c[k]) ** 2))
 
     def e(self):
         lamr = [x for x in self.lam]
@@ -61,9 +63,13 @@ class EM:
         pre_val = sys.maxsize
         while True:
             self.step()
-            # tmp = []
-            # for i in range(self.n):
-            #     val = sum([self.lam[k] * self.pxwk(i,k) for k in range(self.k)])
-            #     tmp.append(math.log(val))
-            # val = -sum(tmp)
-            # print(val)
+            tmp = []
+            for i in range(self.n):
+                val = sum([self.lam[k] * self.pxwk(i,k) for k in range(self.k)])
+                tmp.append(math.log(val))
+            val = -sum(tmp)
+            print(val)
+            print(self.lam)
+            if (pre_val - val) == 0:
+                break
+            pre_val = val
