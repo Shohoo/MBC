@@ -13,8 +13,9 @@ class Reader:
                     counter += 1
                     path = os.path.join(root, filename)
                     print(path)
-                    terms = Extractor.extract(path, True)
-                    d.append(terms)
+                    words = Extractor.extract(path, True)
+                    if len(words) > 0:
+                        d.append(words)
         print(counter)
         return d
 

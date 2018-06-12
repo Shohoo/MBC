@@ -20,21 +20,20 @@ class Extractor:
 
     @staticmethod
     def extract(file, is_html):
-        with open(file, 'r') as file:
+        with open(file, 'rb') as file:
             data = file.read()
             if is_html:
-                soup = BeautifulSoup(data)
+                soup = BeautifulSoup(data.decode('utf-8'))
                 for script in soup(["script", "style"]):
                     script.extract()
                 data = soup.body.get_text()
             t = word_tokenize(data)
-            t_set = set(t)
+            t = Extractor.simplify(t)
+            t = Simplifier.remove_apos(t)
             # TODO remove special chars and maybe single chars, 's, '' etc
-            t_set = Simplifier.remove_single(t_set)
-            t_set_s = Extractor.simplify(t_set)
-            t_set_s = Simplifier.remove_single(t_set_s)
+            t = Simplifier.remove_single(t)
 
-            return t_set_s
+            return t
 
     @staticmethod
     def simplify(t_set):
@@ -52,10 +51,21 @@ class Extractor:
 class Simplifier:
     @staticmethod
     def remove_single(t_set):
-        tmp = t_set.copy()
+        tmp = []
         for s in t_set:
-            if not len(s) > 1:
-                tmp -= set([s])
+            if len(s) > 1:
+                tmp.append(s)
+        return tmp
+
+    @staticmethod
+    def remove_apos(t_set):
+        tmp = []
+        for s in t_set:
+            val = s
+            if "'" in s:
+                index = s.find("'")
+                val = s[:index]
+            tmp.append(val)
         return tmp
 
     @staticmethod

@@ -22,17 +22,23 @@ class EM:
     def _prepare(self):
         self.c = []
         self.lam = []
+        self.d = [numpy.array(d) for d in self.dataset.d_bool]
+        self.pwkdi = [[0 for i in range(self.n)] for k in range(self.k)]
+
         for k in range(self.k):
-            self.c.append(numpy.array([random.randint(0, 1) for i in range(self.vec_l)]))
+            self.c.append(self.d[random.randint(0, self.n - 1)])
             self.lam.append(1 / self.k)
         # self.c = [[0, 1], [1, 0]]
         # self.lam = [0.45, 0.55]
-
-        self.pwkdi = [[0 for i in range(self.n)] for k in range(self.k)]
-        self.d = [numpy.array(d) for d in self.dataset.d]
+        pass
 
     def pxwk(self, i, k):
-        return 1 / math.sqrt(2 * math.pi) * math.exp(-(numpy.linalg.norm(self.d[i] - self.c[k]) ** 2))
+        t1 = self.d[i] - self.c[k]
+        t2 = (numpy.linalg.norm(self.d[i] - self.c[k]))
+        t3 = math.exp(-(numpy.linalg.norm(self.d[i] - self.c[k]) ** 2))
+        t4 = 1 / math.sqrt(2 * math.pi)
+        val = 1 / math.sqrt(2 * math.pi) * math.exp(-(numpy.linalg.norm(self.d[i] - self.c[k]) ** 2))
+        return val
 
     def e(self):
         lamr = [x for x in self.lam]
@@ -70,6 +76,7 @@ class EM:
             val = -sum(tmp)
             print(val)
             print(self.lam)
-            if (pre_val - val) == 0:
+            if (pre_val - val) <= self.epsilon:
+                self.likelyhood = val
                 break
             pre_val = val

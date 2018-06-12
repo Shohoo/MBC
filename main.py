@@ -16,9 +16,13 @@ from nltk import word_tokenize
 if __name__ == "__main__":
     d = Reader.read('./download')
     dataset = Dataset(d)
+    lh = {}
     for i in range(2, 10):
         em = EM(dataset, i, 0.0000000000000001)
         em.do()
         # TODO zapis wyników
+        lh[i] = em.likelyhood
         pass
+    for l in lh:
+        print(str(l) + ': ' + str(lh[l]))
     pass
