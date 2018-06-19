@@ -2,6 +2,7 @@ from nltk import word_tokenize, pos_tag
 from nltk.corpus import wordnet as wn
 from nltk.stem.wordnet import WordNetLemmatizer
 from bs4 import BeautifulSoup
+import os
 import requests
 
 class Extractor:
@@ -20,12 +21,16 @@ class Extractor:
 
     @staticmethod
     def extract(file, is_html):
+        if os.stat(file).st_size == 0:
+            return []
         with open(file, 'rb') as file:
-            data = file.read()
+            data = file.read().decode('utf-8')
             if is_html:
-                soup = BeautifulSoup(data.decode('utf-8'))
+                soup = BeautifulSoup(data)
                 for script in soup(["script", "style"]):
                     script.extract()
+                if soup.body is None:
+                    return []
                 data = soup.body.get_text()
             t = word_tokenize(data)
             t = Extractor.simplify(t)

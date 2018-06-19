@@ -3,8 +3,9 @@ import math
 
 
 class Dataset:
-    def __init__(self, data):
+    def __init__(self, data, data_names):
         self.data = data
+        self.data_names = data_names
         self.dic = None
         self.d = None
         self.vec_l = None

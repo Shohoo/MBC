@@ -22,7 +22,7 @@ class EM:
     def _prepare(self):
         self.c = []
         self.lam = []
-        self.d = [numpy.array(d) for d in self.dataset.d_bool]
+        self.d = [numpy.array(d) for d in self.dataset.d]
         self.pwkdi = [[0 for i in range(self.n)] for k in range(self.k)]
 
         for k in range(self.k):
@@ -46,8 +46,12 @@ class EM:
             for i in range(self.n):
                 m = lamr[0] * self.pxwk(i, 0)
                 for j in range(1, self.k):
-                    m += lamr[j] * self.pxwk(i, j)
-                self.pwkdi[k][i] = lamr[k] * self.pxwk(i, k) / m
+                    pxwk = self.pxwk(i, j)
+                    m += lamr[j] * pxwk
+                if m == 0:
+                    self.pwkdi[k][i] = 0.
+                else:
+                    self.pwkdi[k][i] = lamr[k] * self.pxwk(i, k) / m
 
     def m(self):
         for k in range(self.k):
@@ -72,7 +76,10 @@ class EM:
             tmp = []
             for i in range(self.n):
                 val = sum([self.lam[k] * self.pxwk(i,k) for k in range(self.k)])
-                tmp.append(math.log(val))
+                if val == 0:
+                    tmp.append(0)
+                else:
+                    tmp.append(math.log(val))
             val = -sum(tmp)
             print(val)
             print(self.lam)
@@ -80,3 +87,17 @@ class EM:
                 self.likelyhood = val
                 break
             pre_val = val
+
+        docs = {}
+        for i in range(self.n):
+            s = ''
+            tmp = [self.pxwk(i, k) for k in range(self.k)]
+            max_arg = numpy.argmax(tmp)
+            max_p = tmp[max_arg]
+            tmp_s = ' '.join([str(t) for t in tmp])
+            if max_arg not in docs:
+                docs[max_arg] = []
+            docs[max_arg].append([i, self.dataset.data_names[i], max_arg, max_p])
+            # s = 'dok: ' + str(i) + ' ' + self.dataset.data_names[i] + ' : p: ' + str(max_p) + ' : ' + str(max_arg) + ': ' + tmp_s
+            # print(s)
+        print(docs)

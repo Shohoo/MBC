@@ -14,10 +14,11 @@ from nltk import word_tokenize
 # em.do()
 
 if __name__ == "__main__":
-    d = Reader.read('./download')
-    dataset = Dataset(d)
+    [d,d_names] = Reader.read('../ROBOT/64')
+    dataset = Dataset(d, d_names)
     lh = {}
-    for i in range(2, 10):
+    max = 0
+    for i in range(5, 6):
         em = EM(dataset, i, 0.0000000000000001)
         em.do()
         # TODO zapis wyników
